@@ -12,10 +12,18 @@ const port = Number(process.env.PORT) || 5000;
 
 const server = http.createServer(app);
 
-const allowedOrigins = (process.env.CORS_ORIGINS || "")
+const defaultOrigins = [
+  "https://procomm-frontend.vercel.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+
+const envOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 
 const io = new Server(server, {
   cors: {

@@ -22,7 +22,7 @@ const emailOtpSchema = new mongoose.Schema(
 			default: 0,
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true, collection: "emailotps" }
 );
 
 emailOtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

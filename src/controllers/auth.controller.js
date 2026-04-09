@@ -87,11 +87,13 @@ export async function sendEmailOtpCode(req, res, next) {
 		const otp = String(randomInt(100000, 1000000));
 		const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-		await EmailOtp.findOneAndUpdate(
-			{ email },
-			{ $set: { otpHash: hashOtp(email, otp), expiresAt, attempts: 0 } },
-			{ upsert: true, new: true }
-		);
+		await EmailOtp.deleteMany({ email });
+		await EmailOtp.create({
+			email,
+			otpHash: hashOtp(email, otp),
+			expiresAt,
+			attempts: 0,
+		});
 
 		await sendOtpMail({ toEmail: email, otp });
 

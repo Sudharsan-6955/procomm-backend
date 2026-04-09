@@ -27,6 +27,11 @@ export function createRateLimiter({ windowMs, maxRequests, keyPrefix = "rl" }) {
 	const normalizedMaxRequests = Math.max(Number(maxRequests) || 0, 1);
 
 	return function rateLimiter(req, res, next) {
+		if (req.method === "OPTIONS") {
+			next();
+			return;
+		}
+
 		const key = `${keyPrefix}:${getClientKey(req)}`;
 		const now = Date.now();
 		const current = requestBuckets.get(key);

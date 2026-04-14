@@ -174,8 +174,12 @@ export async function sendMessage(req, res, next) {
 
 		const io = req.app.get("io");
 		if (io) {
+			const sharedPayload = {
+				...mapMessageShared(created),
+				senderName: req.user?.name || "New message",
+			};
 			for (const participantId of chat.participants || []) {
-				io.to(`user:${String(participantId)}`).emit("message:new", mapMessageShared(created));
+				io.to(`user:${String(participantId)}`).emit("message:new", sharedPayload);
 			}
 		}
 

@@ -189,6 +189,7 @@ export async function sendMessage(req, res, next) {
 				await sendChatPushNotifications({
 					recipientIds: pushRecipientIds,
 					chatId,
+					messageId: created._id,
 					senderName: req.user?.name || "New message",
 					messageText: created.text,
 				});

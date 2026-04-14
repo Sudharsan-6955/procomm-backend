@@ -12,7 +12,7 @@ function normalizeText(value, max = 120) {
 	return `${text.slice(0, max - 1)}...`;
 }
 
-export async function sendChatPushNotifications({ recipientIds = [], chatId, senderName, messageText }) {
+export async function sendChatPushNotifications({ recipientIds = [], chatId, senderName, messageText, messageId }) {
 	const normalizedRecipientIds = recipientIds.map((id) => String(id));
 	if (normalizedRecipientIds.length === 0) {
 		return { successCount: 0, failureCount: 0 };
@@ -40,13 +40,12 @@ export async function sendChatPushNotifications({ recipientIds = [], chatId, sen
 
 	const response = await firebaseAdmin.messaging().sendEachForMulticast({
 		tokens,
-		notification: {
-			title: normalizeText(senderName || "ProComm", 60),
-			body: normalizeText(messageText, 120),
-		},
 		data: {
 			type: "chat_message",
 			chatId: String(chatId),
+			messageId: String(messageId || ""),
+			title: normalizeText(senderName || "ProComm", 60),
+			body: normalizeText(messageText, 120),
 			link: `/chat?chatId=${chatId}`,
 		},
 		webpush: {

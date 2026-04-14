@@ -54,6 +54,29 @@ app.get("/api/health", (_req, res) => {
 	res.json({ ok: true });
 });
 
+app.get("/api/health/detailed", async (_req, res) => {
+	try {
+		const adminDb = await import("mongoose").then(m => m.default.connection.db);
+		const adminStatus = await adminDb.admin().ping();
+		
+		res.json({
+			ok: true,
+			server: "running",
+			database: "connected",
+			mongoResponse: adminStatus,
+			timestamp: new Date().toISOString(),
+		});
+	} catch (error) {
+		res.status(500).json({
+			ok: false,
+			server: "running",
+			database: "disconnected",
+			error: String(error?.message || "Database connection failed"),
+			timestamp: new Date().toISOString(),
+		});
+	}
+});
+
 app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chats", chatRoutes);
